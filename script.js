@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", loadTasks);
 function saveTasks() {
     let tasks = [];
     document.querySelectorAll(".task-list li").forEach(task => {
-        tasks.push(task.firstChild.textContent.trim()); // Store task text only
+        tasks.push(task.firstChild.textContent.trim()); // Store only text
     });
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
@@ -11,39 +11,36 @@ function saveTasks() {
 function loadTasks() {
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     let taskList = document.querySelector(".task-list");
-    taskList.innerHTML = ""; // Clear existing tasks before loading
+    taskList.innerHTML = ""; // Clear existing tasks
 
     savedTasks.forEach(taskText => {
-        let li = document.createElement("li");
-        li.innerHTML = `${taskText} <button class="delete-btn">❌</button>`;
-        taskList.appendChild(li);
+        createTaskElement(taskText);
+    });
+}
+
+function createTaskElement(taskText) {
+    let taskList = document.querySelector(".task-list");
+    let li = document.createElement("li");
+    li.innerHTML = `${taskText} <button class="delete-btn">❌</button>`;
+    
+    li.querySelector(".delete-btn").addEventListener("click", function () {
+        li.remove();
+        saveTasks();
     });
 
-    addDeleteListeners(); // Reattach delete button event listeners
+    taskList.appendChild(li);
 }
 
 function addTask() {
     let taskInput = document.getElementById("taskInput").value;
     if (taskInput.trim() === "") return;
 
-    let taskList = document.querySelector(".task-list");
-    let li = document.createElement("li");
-    li.innerHTML = `${taskInput} <button class="delete-btn">❌</button>`;
-    taskList.appendChild(li);
-    
+    createTaskElement(taskInput);
     saveTasks();
     document.getElementById("taskInput").value = "";
-    addDeleteListeners(); // Ensure delete buttons work
-}
-
-function addDeleteListeners() {
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.onclick = function () {
-            this.parentElement.remove(); // Remove task from UI
-            saveTasks(); // Save updated list to local storage
-        };
-    });
 }
 
 document.getElementById("addTaskBtn").onclick = addTask;
-addDeleteListeners();
+loadTasks();
+
+  
