@@ -37,4 +37,3 @@ function addDeleteListeners() {
 
 document.getElementById("addTaskBtn").onclick = addTask;
 addDeleteListeners();
-
