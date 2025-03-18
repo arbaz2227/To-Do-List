@@ -8,7 +8,7 @@ function loadTasks() {
     const savedTasks = localStorage.getItem("tasks");
     if (savedTasks) {
         document.querySelector(".task-list").innerHTML = savedTasks;
-        addDeleteListeners(); // Reattach event listeners after loading
+        addDeleteListeners(); // Reattach delete button listeners
     }
 }
 
@@ -23,7 +23,7 @@ function addTask() {
     
     saveTasks();
     document.getElementById("taskInput").value = "";
-    addDeleteListeners(); // Add event listener for delete buttons
+    addDeleteListeners(); // Ensure delete buttons work
 }
 
 function addDeleteListeners() {
