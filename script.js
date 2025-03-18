@@ -1,15 +1,25 @@
 document.addEventListener("DOMContentLoaded", loadTasks);
 
 function saveTasks() {
-    localStorage.setItem("tasks", document.querySelector(".task-list").innerHTML);
+    let tasks = [];
+    document.querySelectorAll(".task-list li").forEach(task => {
+        tasks.push(task.textContent.replace("❌", "").trim());
+    });
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 function loadTasks() {
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-        document.querySelector(".task-list").innerHTML = savedTasks;
-        addDeleteListeners(); // Reattach delete button listeners
-    }
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let taskList = document.querySelector(".task-list");
+    taskList.innerHTML = ""; // Clear existing tasks before loading
+
+    savedTasks.forEach(taskText => {
+        let li = document.createElement("li");
+        li.innerHTML = `${taskText} <button class="delete-btn">❌</button>`;
+        taskList.appendChild(li);
+    });
+
+    addDeleteListeners(); // Ensure delete buttons work
 }
 
 function addTask() {
@@ -30,7 +40,7 @@ function addDeleteListeners() {
     document.querySelectorAll(".delete-btn").forEach(btn => {
         btn.onclick = function () {
             this.parentElement.remove();
-            saveTasks();
+            saveTasks(); // Save after deleting
         };
     });
 }
