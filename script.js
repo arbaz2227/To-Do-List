@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", loadTasks);
 function saveTasks() {
     let tasks = [];
     document.querySelectorAll(".task-list li").forEach(task => {
-        tasks.push(task.textContent.replace("❌", "").trim());
+        tasks.push(task.firstChild.textContent.trim()); // Store task text only
     });
     localStorage.setItem("tasks", JSON.stringify(tasks));
 }
@@ -19,7 +19,7 @@ function loadTasks() {
         taskList.appendChild(li);
     });
 
-    addDeleteListeners(); // Ensure delete buttons work
+    addDeleteListeners(); // Reattach delete button event listeners
 }
 
 function addTask() {
@@ -39,8 +39,8 @@ function addTask() {
 function addDeleteListeners() {
     document.querySelectorAll(".delete-btn").forEach(btn => {
         btn.onclick = function () {
-            this.parentElement.remove();
-            saveTasks(); // Save after deleting
+            this.parentElement.remove(); // Remove task from UI
+            saveTasks(); // Save updated list to local storage
         };
     });
 }
