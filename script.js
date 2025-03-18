@@ -1,36 +1,40 @@
-const taskInput = document.getElementById("taskInput");
-const addTask = document.getElementById("addTask");
-const taskList = document.getElementById("taskList");
-const toggleDarkMode = document.getElementById("toggleDarkMode");
+document.addEventListener("DOMContentLoaded", loadTasks);
 
-// Function to add a task
-addTask.addEventListener("click", function () {
-    const taskText = taskInput.value.trim();
-    if (taskText === "") return;
+function saveTasks() {
+    localStorage.setItem("tasks", document.querySelector(".task-list").innerHTML);
+}
 
-    const li = document.createElement("li");
-    li.innerHTML = `${taskText} <button class="delete-btn">❌</button>`;
-    
-    // Smooth fade-in effect
-    li.style.opacity = "0";
-    li.style.transform = "translateY(10px)";
-    setTimeout(() => {
-        li.style.opacity = "1";
-        li.style.transform = "translateY(0)";
-    }, 100);
+function loadTasks() {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+        document.querySelector(".task-list").innerHTML = savedTasks;
+        addDeleteListeners(); // Reattach event listeners after loading
+    }
+}
 
-    // Delete button functionality
-    li.querySelector(".delete-btn").addEventListener("click", function () {
-        li.style.opacity = "0";
-        li.style.transform = "translateX(20px)";
-        setTimeout(() => li.remove(), 300);
-    });
+function addTask() {
+    let taskInput = document.getElementById("taskInput").value;
+    if (taskInput.trim() === "") return;
 
+    let taskList = document.querySelector(".task-list");
+    let li = document.createElement("li");
+    li.innerHTML = `${taskInput} <button class="delete-btn">❌</button>`;
     taskList.appendChild(li);
-    taskInput.value = "";
-});
+    
+    saveTasks();
+    document.getElementById("taskInput").value = "";
+    addDeleteListeners(); // Add event listener for delete buttons
+}
 
-// Dark Mode Toggle
-toggleDarkMode.addEventListener("click", function () {
-    document.body.classList.toggle("dark-mode");
-});
+function addDeleteListeners() {
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.onclick = function () {
+            this.parentElement.remove();
+            saveTasks();
+        };
+    });
+}
+
+document.getElementById("addTaskBtn").onclick = addTask;
+addDeleteListeners();
+
